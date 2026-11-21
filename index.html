@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NB ELECTRONICS</title>
+<style>
+:root{--gold:#e8bd58;--black:#090909;--panel:#171717;--muted:#aaa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--black);color:#fff;font-family:Arial,sans-serif}
+header{padding:20px 5%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}
+.logo{font-size:23px;font-weight:900;color:var(--gold);letter-spacing:2px}
+button{cursor:pointer;border:0;border-radius:8px;padding:12px 17px;font-weight:bold}
+.gold{background:var(--gold);color:#111}
+.outline{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.hero{padding:55px 6%;text-align:center;background:linear-gradient(135deg,#211a0c,#080808 70%)}
+.hero h1{font-size:38px;margin:0 0 12px;color:var(--gold)}
+.hero p{color:#ddd}
+.container{max-width:1100px;margin:auto;padding:25px 16px}
+.section-title{color:var(--gold);font-size:23px;margin:15px 0 22px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid #333;border-radius:13px;overflow:hidden}
+.card img{width:100%;height:190px;object-fit:cover;background:#222}
+.card-content{padding:17px}
+.card h3{margin:0 0 9px}
+.muted{color:var(--muted);font-size:14px}
+.price{color:var(--gold);font-weight:bold;font-size:20px;margin:12px 0}
+.progress{height:7px;background:#444;border-radius:10px;margin:12px 0}
+.progress span{display:block;height:100%;background:var(--gold);border-radius:10px}
+.modal{display:none;position:fixed;inset:0;background:#000d;z-index:5;overflow:auto;padding:25px 12px}
+.modal-box{background:#181818;border:1px solid #765c27;border-radius:14px;padding:22px;max-width:500px;margin:30px auto}
+.modal-box h2{color:var(--gold)}
+input,textarea,select{width:100%;padding:13px;margin:8px 0 14px;background:#090909;color:white;border:1px solid #555;border-radius:7px}
+.numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:15px 0}
+.num{padding:11px 2px;background:#292929;color:white;border:1px solid #555}
+.num.selected{background:var(--gold);color:#111}
+.num.taken{background:#6d2525;color:#ddd;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+footer{text-align:center;padding:30px;color:#888;border-top:1px solid #333;margin-top:35px}
+#adminPanel{display:none}
+.stat{background:#222;padding:15px;border-radius:9px;margin:8px 0}
+@media(max-width:500px){.hero h1{font-size:29px}header{padding:15px}.logo{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">NB ELECTRONICS</div>
+  <button class="outline" onclick="openAdmin()">ADMIN</button>
+</header>
+
+<section class="hero">
+  <h1>WIN YOUR DREAM PRODUCT</h1>
+  <p>Choose your lucky ticket and get a chance to win.</p>
+  <button class="gold" onclick="document.getElementById('products').scrollIntoView()">EXPLORE PRODUCTS</button>
+</section>
+
+<main class="container">
+  <h2 class="section-title">AVAILABLE PRODUCTS</h2>
+  <div class="products" id="products">
+    <p class="muted">Products will appear here after the database connection is configured.</p>
+  </div>
+</main>
+
+<div class="modal" id="ticketModal">
+ <div class="modal-box">
+  <h2 id="productTitle">Select Tickets</h2>
+  <p class="muted">Choose your available numbers.</p>
+  <div class="numbers" id="numberGrid"></div>
+  <p id="selectedCount">Selected: 0</p>
+  <div class="actions">
+   <button class="gold" onclick="continuePurchase()">CONTINUE</button>
+   <button class="outline" onclick="closeModal('ticketModal')">CLOSE</button>
+  </div>
+ </div>
+</div>
+
+<div class="modal" id="customerModal">
+ <div class="modal-box">
+  <h2>Customer Information</h2>
+  <input id="customerName" placeholder="Full name">
+  <input id="customerPhone" placeholder="Phone number">
+  <p id="orderSummary" class="muted"></p>
+  <button class="gold" onclick="showPayment()">CONTINUE TO PAYMENT</button>
+  <button class="outline" onclick="closeModal('customerModal')">BACK</button>
+ </div>
+</div>
+
+<div class="modal" id="paymentModal">
+ <div class="modal-box">
+  <h2>Payment</h2>
+  <p class="muted">Payment details will be configured by the administrator.</p>
+  <input id="paymentPhone" placeholder="Your payment phone number">
+  <textarea id="paymentMessage" placeholder="Enter payment confirmation"></textarea>
+  <label>Upload payment proof</label>
+  <input id="paymentProof" type="file" accept="image/*">
+  <button class="gold" onclick="alert('Payment submission will be enabled after secure Supabase integration.')">SUBMIT PAYMENT</button>
+  <button class="outline" onclick="closeModal('paymentModal')">CLOSE</button>
+ </div>
+</div>
+
+<div class="modal" id="adminLogin">
+ <div class="modal-box">
+  <h2>Admin Login</h2>
+  <input id="adminEmail" type="email" placeholder="Admin email">
+  <input id="adminPassword" type="password" placeholder="Password">
+  <button class="gold" onclick="adminLogin()">LOGIN</button>
+  <button class="outline" onclick="closeModal('adminLogin')">CANCEL</button>
+  <p class="muted">Secure login will be connected to Supabase.</p>
+ </div>
+</div>
+
+<div class="modal" id="adminModal">
+ <div class="modal-box">
+  <h2>NB ADMIN DASHBOARD</h2>
+  <div id="adminPanel">
+   <div class="stat">Products Management</div>
+   <input id="newTitle" placeholder="Product title">
+   <textarea id="newDescription" placeholder="Product description"></textarea>
+   <input id="newPrice" type="number" placeholder="Ticket price">
+   <input id="newTotal" type="number" placeholder="Total ticket numbers">
+   <input id="newImage" type="url" placeholder="Product image URL">
+   <button class="gold" onclick="alert('Product creation will be enabled after database connection.')">ADD PRODUCT</button>
+  </div>
+  <button class="outline" onclick="closeModal('adminModal')">CLOSE</button>
+ </div>
+</div>
+
+<footer>© 2026 NB ELECTRONICS. All rights reserved.</footer>
+
+<script>
+let selected=[],currentProduct=null;
+function openAdmin(){document.getElementById('adminLogin').style.display='block'}
+function closeModal(id){document.getElementById(id).style.display='none'}
+function openTickets(product){
+ currentProduct=product;selected=[];
+ document.getElementById('productTitle').textContent=product+' - Select Tickets';
+ let grid=document.getElementById('numberGrid');grid.innerHTML='';
+ for(let i=1;i<=100;i++){
+  let b=document.createElement('button');
+  b.className='num';b.textContent=String(i).padStart(4,'0');
+  b.onclick=()=>{if(selected.includes(i)){selected=selected.filter(x=>x!==i);b.classList.remove('selected')}else if(selected.length<20){selected.push(i);b.classList.add('selected')}updateCount()};
+  grid.appendChild(b);
+ }
+ updateCount();document.getElementById('ticketModal').style.display='block';
+}
+function updateCount(){document.getElementById('selectedCount').textContent='Selected: '+selected.length+' / 20'}
+function continuePurchase(){
+ if(!selected.length){alert('Please select a ticket');return}
+ closeModal('ticketModal');document.getElementById('orderSummary').textContent='Product: '+currentProduct+' | Numbers: '+selected.map(n=>String(n).padStart(4,'0')).join(', ');
+ document.getElementById('customerModal').style.display='block';
+}
+function showPayment(){
+ if(!document.getElementById('customerName').value.trim()||!document.getElementById('customerPhone').value.trim()){alert('Enter your name and phone');return}
+ closeModal('customerModal');document.getElementById('paymentModal').style.display='block';
+}
+function adminLogin(){
+ alert('Supabase authentication has not been connected yet. Do not use this page for real admin access.');
+}
+</script>
+</body>
+</html>

@@ -482,12 +482,115 @@ function statusLabel(status){
   if(s==="rejected")return "REJECTED";
   return "PENDING";
 }
+  
 async function loadCustomerRequests(){
-  const box=$("myRequestsList");box.innerHTML="<p class='muted'>Loading your requests...</p>";
+  const box=$("myRequestsList");
+  box.innerHTML="<p class='muted'>Loading your requests...</p>";
+
   try{
     const rawPhone=String(currentProfile?.phone||"").trim();
     const phone=normalizePhone(rawPhone);
-    if(!phone){box.innerHTML="<p class='message'>Your account phone number is missing. Please contact Admin.</p>";return;}
+
+    if(!phone){
+      box.innerHTML="<p class='message'>Your account phone number is missing. Please contact Admin.</p>";
+      return;
+    }
+
+    const params=new URLSearchParams();
+    params.set("select","*,products(title)");
+    params.set("customer_phone","eq."+phone);
+    params.set("order","created_at.desc");
+
+    let rows=await db("ticket_requests?"+params.toString());
+
+    if((!Array.isArray(rows)||!rows.length)&&rawPhone&&rawPhone!==phone){
+      const retry=new URLSearchParams();
+      retry.set("select","*,products(title)");
+      retry.set("customer_phone","eq."+rawPhone);
+      retry.set("order","created_at.desc");
+      rows=await db("ticket_requests?"+retry.toString());
+    }
+
+    if(!Array.isArray(rows)) rows=[];
+
+    box.innerHTML="";
+
+    if(!rows.length){
+      box.innerHTML="<p class='muted'>No requests found for your account yet.</p>";
+      return;
+    }
+
+    // Load ticket numbers linked to these requests
+    const requestIds=rows.map(r=>r.id).filter(Boolean);
+    const ticketParams=new URLSearchParams();
+    ticketParams.set("select","request_id,ticket_number");
+    ticketParams.set("request_id","in.("+requestIds.join(",")+")");
+    ticketParams.set("order","ticket_number.asc");
+
+    let ticketRows=[];
+    try{
+      ticketRows=await db("ticket_numbers?"+ticketParams.toString());
+      if(!Array.isArray(ticketRows)) ticketRows=[];
+    }catch(ticketError){
+      console.error("Ticket numbers error:",ticketError);
+    }
+
+    // Group ticket numbers by request ID
+    const ticketsByRequest={};
+    ticketRows.forEach(t=>{
+      if(!ticketsByRequest[t.request_id]){
+        ticketsByRequest[t.request_id]=[];
+      }
+      ticketsByRequest[t.request_id].push(t.ticket_number);
+    });
+
+    rows.forEach(r=>{
+      const status=String(r.status||"pending").toLowerCase();
+      const safeStatus=["approved","pending","rejected"].includes(status)?status:"pending";
+      const card=document.createElement("div");
+      card.className="request-card "+safeStatus;
+
+      const date=r.created_at?new Date(r.created_at).toLocaleString():"—";
+      const numbers=ticketsByRequest[r.id]||[];
+
+      const ticketDisplay=numbers.length
+        ? numbers.map(n=>String(n).padStart(4,"0")).join(", ")
+        : "No ticket numbers found";
+
+      card.innerHTML=`
+        <div class="request-head">
+          <strong>${escapeHtml(r.products?.title||"Product Request")}</strong>
+          <span class="request-status status-${safeStatus}">${statusLabel(safeStatus)}</span>
+        </div>
+
+        <div class="request-details">
+          <div><span>Customer</span><strong>${escapeHtml(r.customer_name||"—")}</strong></div>
+          <div><span>Phone</span><strong>${escapeHtml(r.customer_phone||"—")}</strong></div>
+          <div><span>Quantity</span><strong>${escapeHtml(r.quantity??"—")}</strong></div>
+          <div><span>Total Amount</span><strong>${Number(r.total_amount||0).toFixed(2)}</strong></div>
+          <div><span>Transaction Message</span><strong>${escapeHtml(r.payment_message||"—")}</strong></div>
+          <div><span>Date</span><strong>${escapeHtml(date)}</strong></div>
+          <div style="grid-column:1/-1">
+            <span>My Ticket Numbers</span>
+            <strong style="color:var(--orange);font-size:17px">${escapeHtml(ticketDisplay)}</strong>
+          </div>
+        </div>`;
+
+      box.appendChild(card);
+    });
+
+  }catch(err){
+    console.error("My Requests error:",err);
+    const msg=String(err.message||"");
+
+    if(msg.includes("401")||msg.includes("403")||/permission|row-level security/i.test(msg)){
+      box.innerHTML="<p class='message'>Access denied. Please contact Admin.</p>";
+    }else{
+      box.innerHTML=`<p class="message">Could not load requests: ${escapeHtml(msg)}</p>`;
+    }
+  }
+}
+
     const params=new URLSearchParams();
     params.set("select","*,products(title)");
     params.set("customer_phone","eq."+phone);

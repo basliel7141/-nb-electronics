@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NB ELECTRONICS</title>
+
 <style>
 :root{
  --gold:#e8bd58;
@@ -21,7 +22,7 @@ body{
  min-height:100vh;
 }
 header{
- padding:22px 18px;
+ padding:22px 15px;
  text-align:center;
  border-bottom:1px solid #333;
 }
@@ -32,27 +33,25 @@ header{
  letter-spacing:2px;
 }
 main{
- width:100%;
  max-width:460px;
- margin:45px auto;
- padding:18px;
+ margin:40px auto;
+ padding:15px;
 }
-.auth-card{
+.card{
  background:var(--panel);
- border:1px solid #5e4a24;
- border-radius:16px;
+ border:1px solid #665126;
+ border-radius:15px;
  padding:25px 20px;
- box-shadow:0 10px 35px #0008;
+ box-shadow:0 10px 30px #0008;
 }
 h1{
  color:var(--gold);
  text-align:center;
- font-size:26px;
- margin:5px 0 10px;
+ font-size:25px;
 }
 .subtitle{
- color:var(--muted);
  text-align:center;
+ color:var(--muted);
  font-size:14px;
  margin-bottom:25px;
 }
@@ -60,28 +59,25 @@ label{
  display:block;
  margin:14px 0 7px;
  font-size:14px;
- color:#ddd;
 }
 input{
  width:100%;
  padding:14px;
- border-radius:8px;
- border:1px solid #444;
  background:#090909;
  color:white;
- outline:none;
+ border:1px solid #444;
+ border-radius:8px;
  font-size:15px;
+ outline:none;
 }
-input:focus{
- border-color:var(--gold);
-}
+input:focus{border-color:var(--gold)}
 button{
  width:100%;
  padding:14px;
  border:0;
  border-radius:8px;
- font-size:15px;
  font-weight:bold;
+ font-size:15px;
  cursor:pointer;
 }
 .primary{
@@ -95,46 +91,49 @@ button{
  border:1px solid var(--gold);
  margin-top:12px;
 }
-.switch-text{
+.switch{
  text-align:center;
  color:#aaa;
  font-size:14px;
  margin-top:22px;
 }
-.switch-text span{
+.switch span{
  color:var(--gold);
  font-weight:bold;
  cursor:pointer;
 }
-.hidden{display:none!important}
 .message{
- margin-top:15px;
  text-align:center;
+ margin-top:15px;
  color:var(--gold);
  font-size:14px;
+ overflow-wrap:anywhere;
 }
+.hidden{display:none!important}
 .dashboard{
- max-width:800px;
+ max-width:850px;
  margin:35px auto;
  padding:18px;
 }
 .dashboard-box{
  background:var(--panel);
- padding:22px;
- border:1px solid #5e4a24;
+ border:1px solid #665126;
  border-radius:12px;
+ padding:25px;
  margin-top:20px;
 }
-.dashboard h2{color:var(--gold)}
+.dashboard-box h2{color:var(--gold)}
 footer{
  text-align:center;
  color:#777;
- padding:30px 15px;
- margin-top:50px;
+ padding:30px 12px;
+ margin-top:40px;
  border-top:1px solid #292929;
 }
+.loading{opacity:.6;pointer-events:none}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -144,64 +143,87 @@ footer{
 <main id="authArea">
 
  <!-- LOGIN -->
- <section class="auth-card" id="loginBox">
+ <section class="card" id="loginBox">
   <h1>WELCOME BACK</h1>
   <p class="subtitle">Login to your NB ELECTRONICS account</p>
 
   <form id="loginForm">
    <label>Username</label>
-   <input id="loginUsername" type="text"
-    placeholder="Enter your username" required>
+   <input id="loginUsername"
+    type="text"
+    placeholder="Enter username"
+    autocomplete="username"
+    required>
 
    <label>Password</label>
-   <input id="loginPassword" type="password"
-    placeholder="Enter your password" required>
+   <input id="loginPassword"
+    type="password"
+    placeholder="Enter password"
+    autocomplete="current-password"
+    required>
 
-   <button class="primary" type="submit">LOGIN</button>
+   <button class="primary" id="loginButton" type="submit">
+    LOGIN
+   </button>
   </form>
 
-  <p class="switch-text">
+  <p class="switch">
    Don't have an account?
    <span onclick="showRegister()">CREATE ACCOUNT</span>
   </p>
+
   <div class="message" id="loginMessage"></div>
  </section>
 
  <!-- REGISTRATION -->
- <section class="auth-card hidden" id="registerBox">
+ <section class="card hidden" id="registerBox">
   <h1>CREATE ACCOUNT</h1>
-  <p class="subtitle">Register your NB ELECTRONICS account</p>
+  <p class="subtitle">Join NB ELECTRONICS</p>
 
   <form id="registerForm">
    <label>Full Name</label>
-   <input id="fullName" type="text"
-    placeholder="Enter your full name" required>
+   <input id="fullName"
+    type="text"
+    placeholder="Enter full name"
+    required>
 
    <label>Phone Number</label>
-   <input id="phone" type="tel"
-    placeholder="Enter your phone number" required>
+   <input id="phone"
+    type="tel"
+    placeholder="Enter phone number"
+    required>
 
    <label>Username</label>
-   <input id="newUsername" type="text"
-    placeholder="Create a username" required>
+   <input id="newUsername"
+    type="text"
+    placeholder="Create username"
+    minlength="3"
+    maxlength="30"
+    required>
 
    <label>Password</label>
-   <input id="newPassword" type="password"
-    placeholder="Create a password" minlength="8" required>
+   <input id="newPassword"
+    type="password"
+    placeholder="Create password"
+    minlength="8"
+    required>
 
    <label>Confirm Password</label>
-   <input id="confirmPassword" type="password"
-    placeholder="Confirm your password" required>
+   <input id="confirmPassword"
+    type="password"
+    placeholder="Confirm password"
+    required>
 
-   <button class="primary" type="submit">
+   <button class="primary" id="registerButton" type="submit">
     CREATE ACCOUNT
    </button>
   </form>
 
-  <p class="switch-text">
+  <p class="switch">
    Already have an account?
    <span onclick="showLogin()">LOGIN</span>
   </p>
+
   <div class="message" id="registerMessage"></div>
  </section>
 
@@ -212,7 +234,7 @@ footer{
  <h1>NB ELECTRONICS</h1>
  <div class="dashboard-box">
   <h2>Customer Dashboard</h2>
-  <p>Welcome to your account.</p>
+  <p id="customerWelcome">Welcome!</p>
   <p>Your products and tickets will appear here.</p>
  </div>
  <button class="secondary" onclick="logout()">LOGOUT</button>
@@ -223,8 +245,8 @@ footer{
  <h1>NB ELECTRONICS</h1>
  <div class="dashboard-box">
   <h2>Admin Dashboard</h2>
-  <p>Welcome, Administrator.</p>
-  <p>Product management, customer requests and payment settings will appear here.</p>
+  <p id="adminWelcome">Welcome Administrator!</p>
+  <p>Product management and customer requests will appear here.</p>
  </div>
  <button class="secondary" onclick="logout()">LOGOUT</button>
 </section>
@@ -234,44 +256,198 @@ footer{
 </footer>
 
 <script>
+const SUPABASE_URL =
+ "https://drczbywoyefjxmdylxkr.supabase.co";
+
+const SUPABASE_KEY =
+ "sb_publishable_3GN6oubRMwQfnTz2YKFZbg_h9jTjAO2";
+
+const AUTH_ENDPOINT =
+ SUPABASE_URL + "/functions/v1/nb-auth";
+
+async function callAuth(data){
+ const response = await fetch(AUTH_ENDPOINT,{
+  method:"POST",
+  headers:{
+   "Content-Type":"application/json",
+   "apikey":SUPABASE_KEY,
+   "Authorization":"Bearer " + SUPABASE_KEY
+  },
+  body:JSON.stringify(data)
+ });
+
+ const result = await response.json();
+
+ if(!response.ok){
+  throw new Error(result.error || "Request failed");
+ }
+
+ return result;
+}
+
 function showRegister(){
- document.getElementById('loginBox').classList.add('hidden');
- document.getElementById('registerBox').classList.remove('hidden');
+ document.getElementById("loginBox").classList.add("hidden");
+ document.getElementById("registerBox").classList.remove("hidden");
+ clearMessages();
 }
 
 function showLogin(){
- document.getElementById('registerBox').classList.add('hidden');
- document.getElementById('loginBox').classList.remove('hidden');
+ document.getElementById("registerBox").classList.add("hidden");
+ document.getElementById("loginBox").classList.remove("hidden");
+ clearMessages();
 }
 
+function clearMessages(){
+ document.getElementById("loginMessage").textContent="";
+ document.getElementById("registerMessage").textContent="";
+}
+
+function showDashboard(profile){
+ document.getElementById("authArea").classList.add("hidden");
+
+ if(profile.role === "admin"){
+  document.getElementById("adminDashboard").classList.remove("hidden");
+  document.getElementById("adminWelcome").textContent =
+   "Welcome, " + (profile.full_name || profile.username);
+ }else{
+  document.getElementById("customerDashboard").classList.remove("hidden");
+  document.getElementById("customerWelcome").textContent =
+   "Welcome, " + (profile.full_name || profile.username);
+ }
+}
+
+// LOGIN
+document.getElementById("loginForm").addEventListener("submit",
+ async function(e){
+  e.preventDefault();
+
+  const button=document.getElementById("loginButton");
+  const message=document.getElementById("loginMessage");
+
+  button.disabled=true;
+  button.textContent="PLEASE WAIT...";
+  message.textContent="";
+
+  try{
+   const username=document.getElementById("loginUsername").value.trim();
+   const password=document.getElementById("loginPassword").value;
+
+   const result=await callAuth({
+    action:"login",
+    username,
+    password
+   });
+
+   if(!result.success || !result.profile){
+    throw new Error("Login failed");
+   }
+
+   sessionStorage.setItem(
+    "nb_profile",
+    JSON.stringify(result.profile)
+   );
+
+   sessionStorage.setItem(
+    "nb_session",
+    JSON.stringify(result.session)
+   );
+
+   showDashboard(result.profile);
+
+  }catch(error){
+   message.textContent=error.message;
+  }finally{
+   button.disabled=false;
+   button.textContent="LOGIN";
+  }
+ }
+);
+
+// REGISTRATION
+document.getElementById("registerForm").addEventListener("submit",
+ async function(e){
+  e.preventDefault();
+
+  const button=document.getElementById("registerButton");
+  const message=document.getElementById("registerMessage");
+
+  const fullName=document.getElementById("fullName").value.trim();
+  const phone=document.getElementById("phone").value.trim();
+  const username=document.getElementById("newUsername").value.trim();
+  const password=document.getElementById("newPassword").value;
+  const confirm=document.getElementById("confirmPassword").value;
+
+  message.textContent="";
+
+  if(password!==confirm){
+   message.textContent="Passwords do not match.";
+   return;
+  }
+
+  if(password.length<8){
+   message.textContent="Password must be at least 8 characters.";
+   return;
+  }
+
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(username)){
+   message.textContent="Username must be 3-30 letters, numbers or underscore.";
+   return;
+  }
+
+  button.disabled=true;
+  button.textContent="PLEASE WAIT...";
+
+  try{
+   const result=await callAuth({
+    action:"register",
+    full_name:fullName,
+    phone,
+    username,
+    password
+   });
+
+   message.textContent =
+    result.message || "Account created. Please login.";
+
+   document.getElementById("registerForm").reset();
+
+  }catch(error){
+   message.textContent=error.message;
+  }finally{
+   button.disabled=false;
+   button.textContent="CREATE ACCOUNT";
+  }
+ }
+);
+
 function logout(){
- document.getElementById('authArea').classList.remove('hidden');
- document.getElementById('customerDashboard').classList.add('hidden');
- document.getElementById('adminDashboard').classList.add('hidden');
+ sessionStorage.removeItem("nb_profile");
+ sessionStorage.removeItem("nb_session");
+
+ document.getElementById("customerDashboard").classList.add("hidden");
+ document.getElementById("adminDashboard").classList.add("hidden");
+ document.getElementById("authArea").classList.remove("hidden");
+
+ document.getElementById("loginForm").reset();
  showLogin();
 }
 
-document.getElementById('loginForm').addEventListener('submit',function(e){
- e.preventDefault();
- document.getElementById('loginMessage').textContent =
- 'Authentication will be connected to Supabase next.';
-});
+// Restore current page session
+(function(){
+ const saved=sessionStorage.getItem("nb_profile");
 
-document.getElementById('registerForm').addEventListener('submit',function(e){
- e.preventDefault();
-
- const password=document.getElementById('newPassword').value;
- const confirm=document.getElementById('confirmPassword').value;
-
- if(password!==confirm){
-  document.getElementById('registerMessage').textContent =
-   'Passwords do not match.';
-  return;
+ if(saved){
+  try{
+   const profile=JSON.parse(saved);
+   if(profile.role==="admin" || profile.role==="customer"){
+    showDashboard(profile);
+   }
+  }catch(error){
+   sessionStorage.removeItem("nb_profile");
+   sessionStorage.removeItem("nb_session");
+  }
  }
-
- document.getElementById('registerMessage').textContent =
-  'Registration will be connected to Supabase next.';
-});
+})();
 </script>
 
 </body>

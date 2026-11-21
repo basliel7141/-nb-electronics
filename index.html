@@ -235,8 +235,8 @@ footer{text-align:center;color:#777;padding:25px;border-top:1px solid #292929;ma
       <label>Phone Number</label><input id="purchasePhone" type="tel" required>
       <h2>Payment Information</h2>
       <div id="customerPaymentInfo" class="payment-info">Loading payment details...</div>
-      <label>Payment Confirmation Text</label><input id="purchasePaymentMessage" required>
-      <label>Upload Payment Proof</label><input id="purchaseProof" type="file" accept="image/*" required>
+      <label>Transaction ID or Message</label>
+<textarea id="purchasePaymentMessage" placeholder="Enter your Transaction ID or payment message" required></textarea>
       <button class="primary full" id="submitPurchase">SUBMIT PAYMENT REQUEST</button>
       <div id="purchaseMessage" class="message"></div>
     </form>

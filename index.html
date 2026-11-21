@@ -263,8 +263,7 @@ const SUPABASE_KEY =
  "sb_publishable_3GN6oubRMwQfnTz2YKFZbg_h9jTjAO2";
 
 const AUTH_ENDPOINT =
- SUPABASE_URL + "/functions/v1/nb-auth";
-
+ SUPABASE_URL + "/functions/v1/dynamic-worker";
 async function callAuth(data){
  const response = await fetch(AUTH_ENDPOINT,{
   method:"POST",
